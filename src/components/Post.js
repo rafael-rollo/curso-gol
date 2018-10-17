@@ -5,7 +5,8 @@ import {
     Text,
     StyleSheet,
     Dimensions,
-    TouchableOpacity
+    TouchableOpacity,
+    TextInput
 } from 'react-native';
 
 export class Post extends Component {
@@ -13,7 +14,8 @@ export class Post extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      foto: this.props.foto
+      foto: this.props.foto,
+      valorComentario: ''
     }
   }
 
@@ -41,6 +43,26 @@ export class Post extends Component {
     this.setState({foto: fotoAtualizada})
   }
 
+  adicionaComentario = () => {
+    const { foto, valorComentario } = this.state
+
+    if (valorComentario === '') return;
+  
+    // adicionar na lista
+    const novaLista = [
+      ...foto.comentarios,
+      {login: 'meuUsuario', texto: valorComentario}
+    ]
+
+    const fotoAtualizada = {
+      ...this.state.foto,
+      comentarios: novaLista
+    }
+
+    this.setState({foto: fotoAtualizada})
+    this.inputComentario.clear();
+  }
+
   render() {
     const { foto } = this.state;
 
@@ -65,15 +87,33 @@ export class Post extends Component {
           {
             foto.likers.length > 0 && 
               <Text style={styles.likes}>
-                {foto.likers.length} curtidas
+                {foto.likers.length} {foto.likers.length > 1 ? 'curtidas' : 'curtida'}
               </Text>
           }
           
           <Text style={styles.comentario}>
-            <Text>
-              <Text style={styles.titulo}>{foto.loginUsuario}</Text> {foto.comentario}
-            </Text>
+            <Text style={styles.titulo}>{foto.loginUsuario}</Text> {foto.comentario}
           </Text>
+
+          {
+            foto.comentarios.map((comentario, index) => 
+              <Text key={index} style={styles.comentario}>
+                <Text style={styles.titulo}>{comentario.login}</Text> {comentario.texto}
+              </Text>
+            )
+          }
+
+          <View style={styles.novoComentario}>
+            <TextInput style={styles.input}
+                placeholder="Digite um comentário..."
+                onChangeText={texto => this.setState({valorComentario: texto})}
+                ref={input => this.inputComentario = input} />
+
+            <TouchableOpacity onPress={this.adicionaComentario}>
+              <Image source={require('../../resources/img/send.png')}
+                  style={styles.botaoDeLike}/>
+            </TouchableOpacity>
+          </View>
         </View>
       </View>
     )
@@ -105,18 +145,28 @@ const styles = StyleSheet.create({
   },
   botaoDeLike: {
     width: 40,
-    height: 40
+    height: 40,
+    marginBottom: 5
   },
   likes: {
-    marginTop: 5,
     fontWeight: 'bold'
   },
   comentario: {
-    marginTop: 5,
     flexDirection: 'row'
   },
   titulo: {
     fontWeight: 'bold',
     marginRight: 5
+  },
+  input: {
+    fontSize: 18,
+    flex: 1,
+    height: 40
+  },
+  novoComentario: {
+    borderBottomWidth: 1,
+    borderBottomColor: '#ddd',
+    flexDirection: 'row',
+    alignItems: 'center'
   }
 })
