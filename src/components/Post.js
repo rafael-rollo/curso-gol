@@ -6,65 +6,35 @@ import {
     StyleSheet,
     Dimensions,
     TouchableOpacity,
-    TextInput
 } from 'react-native';
+
+import InputComentario from './InputComentario';
+import Likes from './Likes';
 
 export class Post extends Component {
 
-  constructor(props) {
-    super(props);
-    this.state = {
-      foto: this.props.foto,
-      valorComentario: ''
-    }
-  }
-
-  like = () => {
-    let novaLista = [];
-
-    //novaLista = this.state.foto.likers.concat({login: 'meuUsuario'}) 
-    if (!this.state.foto.likeada) {
-      novaLista = [
-        ...this.state.foto.likers,
-        {login: 'meuUsuario'}
-      ]
-    } else {
-      novaLista = this.state.foto.likers
-          .filter(liker => liker.login !== 'meuUsuario')
-    }
-
-    const fotoAtualizada = {
-      ...this.state.foto,
-      likeada: !this.state.foto.likeada,
-      likers: novaLista
-    }
-    //Object.assign({}, this.state.foto, {likeada: !this.state.foto.likeada})
-
-    this.setState({foto: fotoAtualizada})
-  }
-
-  adicionaComentario = () => {
-    const { foto, valorComentario } = this.state
-
+  adicionaComentario = (valorComentario, inputRef) => {
+    const { foto } = this.state
     if (valorComentario === '') return;
   
-    // adicionar na lista
     const novaLista = [
       ...foto.comentarios,
       {login: 'meuUsuario', texto: valorComentario}
     ]
 
     const fotoAtualizada = {
-      ...this.state.foto,
+      ...foto,
       comentarios: novaLista
     }
 
-    this.setState({foto: fotoAtualizada})
-    this.inputComentario.clear();
+    inputRef.clear();
+    this.setState({
+      foto: fotoAtualizada,
+    })
   }
 
   render() {
-    const { foto } = this.state;
+    const { foto, likeCallback } = this.props;
 
     return (
       <View>
@@ -78,18 +48,7 @@ export class Post extends Component {
           style={styles.fotoDoPost}/>
 
         <View style={styles.footer}>
-          <TouchableOpacity onPress={this.like}>
-            <Image source={foto.likeada ? 
-                require('../../resources/img/s2-checked.png') : require('../../resources/img/s2.png') }
-                style={styles.botaoDeLike}/>
-          </TouchableOpacity>
-
-          {
-            foto.likers.length > 0 && 
-              <Text style={styles.likes}>
-                {foto.likers.length} {foto.likers.length > 1 ? 'curtidas' : 'curtida'}
-              </Text>
-          }
+          <Likes foto={foto} likeCallback={() => likeCallback(foto.id)}/>
           
           <Text style={styles.comentario}>
             <Text style={styles.titulo}>{foto.loginUsuario}</Text> {foto.comentario}
@@ -103,17 +62,7 @@ export class Post extends Component {
             )
           }
 
-          <View style={styles.novoComentario}>
-            <TextInput style={styles.input}
-                placeholder="Digite um comentário..."
-                onChangeText={texto => this.setState({valorComentario: texto})}
-                ref={input => this.inputComentario = input} />
-
-            <TouchableOpacity onPress={this.adicionaComentario}>
-              <Image source={require('../../resources/img/send.png')}
-                  style={styles.botaoDeLike}/>
-            </TouchableOpacity>
-          </View>
+          <InputComentario comentarioCallback={this.adicionaComentario}/>
         </View>
       </View>
     )
@@ -143,14 +92,6 @@ const styles = StyleSheet.create({
   footer: {
     margin: 10
   },
-  botaoDeLike: {
-    width: 40,
-    height: 40,
-    marginBottom: 5
-  },
-  likes: {
-    fontWeight: 'bold'
-  },
   comentario: {
     flexDirection: 'row'
   },
@@ -158,15 +99,4 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginRight: 5
   },
-  input: {
-    fontSize: 18,
-    flex: 1,
-    height: 40
-  },
-  novoComentario: {
-    borderBottomWidth: 1,
-    borderBottomColor: '#ddd',
-    flexDirection: 'row',
-    alignItems: 'center'
-  }
 })
