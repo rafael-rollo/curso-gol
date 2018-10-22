@@ -13,25 +13,7 @@ import Likes from './Likes';
 
 export class Post extends Component {
 
-  adicionaComentario = (valorComentario, inputRef) => {
-    const { foto } = this.state
-    if (valorComentario === '') return;
   
-    const novaLista = [
-      ...foto.comentarios,
-      {login: 'meuUsuario', texto: valorComentario}
-    ]
-
-    const fotoAtualizada = {
-      ...foto,
-      comentarios: novaLista
-    }
-
-    inputRef.clear();
-    this.setState({
-      foto: fotoAtualizada,
-    })
-  }
 
   render() {
     const { foto, likeCallback } = this.props;
@@ -62,7 +44,8 @@ export class Post extends Component {
             )
           }
 
-          <InputComentario comentarioCallback={this.adicionaComentario}/>
+          <InputComentario idFoto={foto.id} 
+              comentarioCallback={this.props.comentarioCallback}/>
         </View>
       </View>
     )

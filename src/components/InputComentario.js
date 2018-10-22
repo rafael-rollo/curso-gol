@@ -17,7 +17,8 @@ export class InputComentario extends Component {
   }
 
   onComment = () => {
-    this.props.comentarioCallback(this.state.valorComentario, this.inputComentario)
+    this.props.comentarioCallback(this.props.idFoto, 
+        this.state.valorComentario, this.inputComentario)
     this.setState({valorComentario: ''})
   }
 
