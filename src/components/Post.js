@@ -10,6 +10,7 @@ import {
 
 import InputComentario from './InputComentario';
 import Likes from './Likes';
+import DefaultImage from './DefaultImage';
 
 export class Post extends Component {
 
@@ -26,8 +27,7 @@ export class Post extends Component {
           <Text>{foto.loginUsuario}</Text>
         </View>
         
-        <Image source={{uri: foto.urlFoto}}
-          style={styles.fotoDoPost}/>
+        <DefaultImage src={foto.urlFoto} style={styles.fotoDoPost}/>
 
         <View style={styles.footer}>
           <Likes foto={foto} likeCallback={() => likeCallback(foto.id)}/>
