@@ -1,0 +1,57 @@
+add header 'Cache-Control': 'no-cache'
+
+------
+
+My issue was the emulator had a dns server error. 
+I fixed this by appending -dns 8.8.8.8 when running the emulator command.
+
+------
+
+I dont know how far this approach is good, but for me if I go to
+Tools -> AVD Manager -> Choose my device and wipe the data.
+
+Then re-run the reac-native run-android, it seems to fetch the results perfectly without any network errors.
+But it doesnt make sense why this approach works.
+
+------
+
+In my case I had to specify the dns-server when starting up, which allowed me internet access.
+
+The following on Mac:
+
+cd ~/Library/Android/sdk/tools
+emulator -list-avds
+Will give you a list of emulators, then you will need to start one up with the DNS specified, e.g.
+
+emulator -avd Nexus_7_2012_API_27 -dns-server 10.1.1.1
+Also, in my config I was referring to a hostname that was configured in my /etc/hosts which seems to work for iOS emulator, but I have to go with the ip address on the android one.
+
+------
+
+# this worked for me
+i have https and http on my server
+my IP and port constant is rejecting request for security reason
+and i can't use constant IP in my URL react native because it change periodicly
+i started with
+https://185.85.*:8080/api .. > it closed by sysadmin
+http://185.85.*/api .. > it closed by sysadmin
+http://mysite.com/api .. http manual
+https://mysite.com/api .. https manul
+and so on ...
+and i suddenly tested with
+https://www.mysite.com/api .. and it worked 😂😂😂😂
+dont forget to test with WWW
+
+------
+
+I'm working with React native and Flask REST API, i had the same issue.
+And i fixed it by adding:
+
+host= '0.0.0.0'
+Example:
+if __name__ == '__main__':
+    app.run(debug=True, host= '0.0.0.0')
+Thanks to @jhadjar
+
+------
+
